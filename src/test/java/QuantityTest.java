@@ -1,5 +1,5 @@
-package quantityMeasurement;
 import org.junit.*;
+import quantityMeasurement.*;
 
 public class QuantityTest {
     @Test
