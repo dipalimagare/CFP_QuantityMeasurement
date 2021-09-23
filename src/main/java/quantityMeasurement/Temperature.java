@@ -1,27 +1,22 @@
 package quantityMeasurement;
 
-public class Temperature {
-    public enum Unit {CELSIUS, FAHRENHEIT}
+import java.util.function.*;
 
-    private final Unit unit;
-    private final double temp;
+public enum Temperature implements MeasurementUnits {
+    DEG_F(true), DEG_C(false);
 
-    public Temperature(Unit unit, double temp) {
-        this.unit = unit;
-        this.temp = temp;
-    }
+    private final Function<Double, Double> baseUnitConversion;
+    private final Function<Double, Double> degFToDegC = (Double degF) -> (degF - 32) * 5 / 9;
+    private final Function<Double, Double> degCToDegF =(Double degC) -> degC;
 
-    public boolean compare(Temperature that) {
-        if (this.unit.equals(Unit.FAHRENHEIT) && that.unit.equals(Unit.CELSIUS))
-            return Double.compare((this.temp - 32) * 5 / 9, that.temp) == 0;
-        return false;
+    Temperature(boolean isDegF) {
+        if (isDegF) this.baseUnitConversion = degFToDegC;
+        else this.baseUnitConversion = degCToDegF;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Temperature that = (Temperature) o;
-        return Double.compare(that.temp, temp) == 0 && unit == that.unit;
+    public double convertToBaseUnit(QuantityMeasurementSystem obj) {
+        return baseUnitConversion.apply(obj.value);
     }
+
 }
